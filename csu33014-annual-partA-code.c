@@ -242,7 +242,7 @@ void partA_vectorized6(float *restrict a, float *restrict b,
       b4 = _mm_loadu_ps(&b);
       c4 = _mm_loadu_ps(&c);
       temp = _mm_mul_ps(b4, c4); //***not correct!
-      sum4 = _mm_add_ps(sum4, temp)
+      sum4 = _mm_add_ps(sum4, temp);
     }
     //a[i] = sum;
     a4 = sum4;
@@ -250,4 +250,5 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
+
 
