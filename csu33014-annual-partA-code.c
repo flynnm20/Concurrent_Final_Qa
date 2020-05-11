@@ -92,7 +92,7 @@ void partA_vectorized2(float *restrict a, float *restrict b, int size)
   __m128 a4, b4;
   float one = 1;
   __m128 ones = _mm_set1_ps(one);
-  for (int i = 0; i < size - 3; i++)
+  for (int i = 0; i < size - 3; i + 4)
   {
     b4 = _mm_loadu_ps(&b[i]);
     b4 = _mm_add_ps(b4, ones); // b[i]+1
@@ -126,6 +126,9 @@ void partA_routine3(float *restrict a, float *restrict b, int size)
 void partA_vectorized3(float *restrict a, float *restrict b, int size)
 {
   // replace the following code with vectorized code
+  __m128 a4, b4;
+  float zero = 0;
+  __m128 zeros = _mm_set1_ps(one);
   for (int i = 0; i < size; i++)
   {
     if (a[i] < 0.0)
@@ -216,3 +219,4 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
+
