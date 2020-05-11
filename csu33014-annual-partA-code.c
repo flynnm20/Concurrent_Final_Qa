@@ -90,7 +90,8 @@ void partA_vectorized2(float *restrict a, float *restrict b, int size)
 {
   // replace the following code with vectorized code
   __m128 a4, b4;
-  __m128 ones = _mm_load1_ps((float)1);
+  float one = 1;
+  __m128 ones = _mm_load1_ps(one);
   for (int i = 0; i < size - 3; i++)
   {
     b4 = _mm_loadu_ps(&b[i]);
