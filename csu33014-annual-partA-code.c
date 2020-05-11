@@ -128,7 +128,7 @@ void partA_vectorized3(float *restrict a, float *restrict b, int size)
   // replace the following code with vectorized code
   __m128 a4, b4;
   float zero = 0;
-  __m128 zeros = _mm_set1_ps(one);
+  __m128 zeros = _mm_set1_ps(zeros);
   for (int i = 0; i < size; i++)
   {
     if (a[i] < 0.0)
@@ -219,4 +219,3 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
-
