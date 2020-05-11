@@ -104,7 +104,7 @@ void partA_vectorized2(float *restrict a, float *restrict b, int size)
   int remainder = size % 4;
   for (int i = 0; i < remainder; i++)
   {
-    a[size - i] = 1 - 1.0 / (b[size - i] + 1.0);
+    a[size - i] = 1 - (1.0 / (b[size - i] + 1.0));
   }
 }
 
