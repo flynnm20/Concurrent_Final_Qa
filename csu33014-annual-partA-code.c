@@ -100,7 +100,7 @@ void partA_vectorized2(float *restrict a, float *restrict b, int size)
     _mm_storeu_ps(&a[i], a4);    // store in a.
   }
   // now have at most 3 extra values;
-  remainder = size % 4;
+  int remainder = size % 4;
   for (int i = 0; i < remainder; i++)
   {
     a[size - i] = 1 - 1.0 / (b[size - i] + 1.0);
