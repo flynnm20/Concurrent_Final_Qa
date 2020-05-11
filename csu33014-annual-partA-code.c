@@ -64,14 +64,17 @@ float partA_vectorized1(float *restrict a, float *restrict b,
                         int size)
 {
   // replace the following code with vectorized code
-  float sum = 0.0;
-  __m128 a4, b4;
-  // idea. keep taking groups of 4 until the difference between i and size is less than 4.
-  for (int i = 0; i < size - 3; i++)
+  float *restrict sum;
+  __m128 a4, b4, temp, sum4;
+  for (int i = 0; i < size; i = i + 4)
   {
-    sum = sum + a[i] * b[i];
+    a4 = _mm_loadu_ps(&a[i]);
+    b4 = _mm_loadu_ps(&b[i]);
+    temp = _mm_mul_ps(a4, b4);
+    sum4 = _mm_add_ps(sum4, temp);
+    _mm_storeu_ps(&sum[i], sum4);
   }
-  return sum;
+  //return sum;
 }
 
 /******************* routine 2 ***********************/
@@ -89,22 +92,16 @@ void partA_routine2(float *restrict a, float *restrict b, int size)
 void partA_vectorized2(float *restrict a, float *restrict b, int size)
 {
   // replace the following code with vectorized code
-  __m128 a4, b4;
-  float one = 1;
-  __m128 ones = _mm_set1_ps(one);
-  for (int i = 0; i < (size - 3); i + 4)
+  __m128 a4, b4, dem, one4, temp;
+  for (int i = 0; i < size; i = i + 4)
   {
+    //a[i] = 1 - (1.0/(b[i]+1.0));
     b4 = _mm_loadu_ps(&b[i]);
-    b4 = _mm_add_ps(b4, ones); // b[i]+1
-    b4 = _mm_div_ps(ones, b4); //1/(b[i]-1)
-    a4 = _mm_sub_ps(ones, b4); //a[i] = 1 - (1.0 / (b[i] + 1.0));
-    _mm_storeu_ps(&a[i], a4);  // store in a.
-  }
-  // now have at most 3 extra values;
-  int remainder = size % 4;
-  for (int i = 0; i < remainder; i++)
-  {
-    a[size - i] = 1 - (1.0 / (b[size - i] + 1.0));
+    one4 = _mm_loadu_ps(1);
+    dem = _mm_add_ps(b4, one4);
+    temp = _mm_div_ps(one4, dem);
+    a4 = _mm_sub_ps(one4, temp);
+    _mm_storeu(&a[i], a4);
   }
 }
 
@@ -126,14 +123,20 @@ void partA_routine3(float *restrict a, float *restrict b, int size)
 void partA_vectorized3(float *restrict a, float *restrict b, int size)
 {
   // replace the following code with vectorized code
-  __m128 a4, b4;
-  __m128 zeros = _mm_set1_ps(0);
+  __m128 a4, b4, zero4, mask, a_min, zero_min;
   for (int i = 0; i < size; i++)
   {
-    if (a[i] < 0.0)
-    {
-      a[i] = b[i];
-    }
+    //if ( a[i] < 0.0 ) {
+    // a[i] = b[i];
+    //}
+    a4 = _mm_loadu_ps(&a[i]);
+    zero4 = _mm_loadu_ps(0);
+    mask = _mm_cmplt_ps(a4, zero4);     // make mask to find min betweeen a and 0
+    a_min = _mm_and_ps(a4, mask);       //find where a is min
+    zero_min = _mm_and_ps(zero4, mask); // find where 0 is min
+    a4 = _mm_xor_ps(a_min, zero_min);
+    //b4 =
+    _mm_storeu_ps(&a[i], a4);
   }
 }
 
@@ -154,11 +157,27 @@ void partA_routine4(float *restrict a, float *restrict b,
 void partA_vectorized4(float *restrict a, float *restrict b,
                        float *restrict c)
 {
+  __m128 a4, b4, c4, b2, c2, zero4, t1, t2, ai4;
+  int getai;
   // replace the following code with vectorized code
   for (int i = 0; i < 2048; i = i + 2)
   {
-    a[i] = b[i] * c[i] - b[i + 1] * c[i + 1];
-    a[i + 1] = b[i] * c[i + 1] + b[i + 1] * c[i];
+    //  a[i] = b[i]*c[i] - b[i+1]*c[i+1];
+    //  a[i+1] = b[i]*c[i+1] + b[i+1]*c[i];
+    b4 = _mm_loadu_ps(&b);
+    c4 = _mm_loadu_ps(&c);
+    zero4 = _mm_loadu_ps(0);
+    b2 = _mm_shuffle_ps(b4, zero4, _MM_SHUFFLE(3, 2, 1, 0)); //create vector |b[i]|b[i+1]|0|0|
+    c2 = _mm_shuffle_ps(c4, zero4, _MM_SHUFFLE(3, 2, 1, 0)); //create vector |c[i]|c[i+1]|0|0|
+    t1 = _mm_mul_ps(b2, c2);                                 //t1 = |b[i]*c[i]|b[i+1]*c[i+1]|0|0|
+    t2 = t1;
+    //turn t2 into negative of t1
+    //hadd (i.e t1 + (-t2))
+    //store in a
+    //a[i+1].....
+    //temp = _mm_shuffle(t1,t1, _MM_SHUFFLE())
+    ai4 = _mm_sub_ps(t1, t1);
+    _mm_storeu_ps(&a[i], a4);
   }
 }
 
@@ -178,9 +197,13 @@ void partA_vectorized5(unsigned char *restrict a,
                        unsigned char *restrict b, int size)
 {
   // replace the following code with vectorized code
-  for (int i = 0; i < size; i++)
+  __m128 a4, b4;
+  for (int i = 0; i < size; i = i + 4)
   {
-    a[i] = b[i];
+    //a[i] = b[i];
+    b4 = _mm_loadu_ps(&b);
+    a4 = b4;
+    _mm_storeu_ps(&a[i], a4);
   }
 }
 
@@ -206,15 +229,25 @@ void partA_vectorized6(float *restrict a, float *restrict b,
                        float *restrict c)
 {
   // replace the following code with vectorized code
+  __m128 a4, b4, c4, sum4, temp;
   a[0] = 0.0;
+  a4 = _mm_loadu_ps(&a);
   for (int i = 1; i < 1023; i++)
   {
     float sum = 0.0;
+    sum4 = _mm_loadu_ps(&sum);
     for (int j = 0; j < 3; j++)
     {
-      sum = sum + b[i + j - 1] * c[j];
+      //sum = sum +  b[i+j-1] * c[j];
+      b4 = _mm_loadu_ps(&b);
+      c4 = _mm_loadu_ps(&c);
+      temp = _mm_mul_ps(b4, c4); //***not correct!
+      sum4 = _mm_add_ps(sum4, temp)
     }
-    a[i] = sum;
+    //a[i] = sum;
+    a4 = sum4;
+    _mm_storeu_ps(&a[i], a4);
   }
   a[1023] = 0.0;
 }
+
