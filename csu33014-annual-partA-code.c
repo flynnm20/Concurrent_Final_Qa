@@ -272,7 +272,7 @@ void partA_vectorized6(float *restrict a, float *restrict b,
     sumVector = _mm_add_ps(sumVector, j2);
     _mm_storeu_ps(&a[i], sumVector);
   }
-  for (int i = 1; i < 1023; i++)
+  for (int i = 1021; i < 1023; i++)
   {
     float sum = 0.0;
     for (int j = 0; j < 3; j++)
