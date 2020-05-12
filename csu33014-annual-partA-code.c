@@ -177,11 +177,11 @@ void partA_vectorized4(float *restrict a, float *restrict b,
   // replace the following code with vectorized code
   for (int i = 0; i < 2048; i = i + 4)
   {
-    b4 = _mm_loadu_ps(&b[i]); // get 4 values of b
-    c4 = _mm_loadu_ps(&c[i]); // get 4 valuse of a
+    b4 = _mm_loadu_ps(&b[i]);         // get 4 values of b
+    c4 = _mm_loadu_ps(&c[i]);         // get 4 valuse of a
+    b4plus = _mm_loadu_ps(&b[i + 1]); // get i+1 4 values of b
+    c4plus = _mm_loadu_ps(&c[i + 1]); // get i+1 4 valuse of a
 
-    b4plus = _mm_loadu_ps(&b[i + 1]);               // get i+1 4 values of b
-    c4plus = _mm_loadu_ps(&c[i + 1]);               // get i+1 4 valuse of a
     product = _mm_mul_ps(b4, c4);                   //b[i] * c[i]
     productplus1 = _mm_mul_ps(c4plus, b4plus);      // b[i + 1] * c[i + 1];
     firstgroup = _mm_sub_ps(product, productplus1); //a[i] = b[i] * c[i] - b[i + 1] * c[i + 1];
@@ -189,7 +189,7 @@ void partA_vectorized4(float *restrict a, float *restrict b,
     product = _mm_mul_ps(b4, c4plus);                                           // b[i] * c[i + 1]
     productplus1 = _mm_mul_ps(c4, b4plus);                                      // b[i + 1] * c[i]
     secondgroup = _mm_add_ps(productplus1, product);                            //a[i + 1] = b[i] * c[i + 1] + b[i + 1] * c[i];
-    results = _mm_shuffle_ps(firstgroup, secondgroup, _MM_SHUFFLE(0, 2, 1, 3)); // combine the 2 halfs
+    results = _mm_shuffle_ps(firstgroup, secondgroup, _MM_SHUFFLE(0, 2, 0, 2)); // combine the 2 halfs
     results = _mm_shuffle_ps(results, results, _MM_SHUFFLE(0, 2, 1, 3));        // combine the 2 halfs
     _mm_storeu_ps(&a[i], results);                                              // store the updated a4 back in the orignal a.
   }
