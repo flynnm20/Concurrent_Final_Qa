@@ -266,8 +266,8 @@ void partA_vectorized6(float *restrict a, float *restrict b,
     b4Minus = _mm_load_ps(&b[i - 1]);
     b4Plus = _mm_load_ps(&b[i + 1]);
     j0 = _mm_mul_ps(b4Minus, c0);
-    j1 = _mm_mul_ps(b4, c0);
-    j2 = _mm_mul_ps(b4Plus, c0);
+    j1 = _mm_mul_ps(b4, c1);
+    j2 = _mm_mul_ps(b4Plus, c2);
     sumVector = _mm_add_ps(j0, j1);
     sumVector = _mm_add_ps(sumVector, j2);
     _mm_storeu_ps(&a[i], sumVector);
