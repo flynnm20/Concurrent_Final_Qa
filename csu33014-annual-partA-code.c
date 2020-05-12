@@ -218,16 +218,15 @@ void partA_vectorized5(unsigned char *restrict a,
                        unsigned char *restrict b, int size)
 {
   // replace the following code with vectorized code
-  __m128 a4, b4;
+  // since we aren't working with floats we need to cast them correctly.
+  __m128i a4, b4;
   int max_mul = size - (size % 4);
-  for (int i = 0; i < max_mul; i = i + 4)
+  for (int i = 0; i < max_mul; i = i + 16)
   {
-    a4 = _mm_loadu_ps(&a[i]); // get 4 valuse of a
-    b4 = _mm_loadu_ps(&b[i]); // get 4 values of b
-    _mm_storeu_ps(&a[i], b4); // store the b4 in a.
-    _mm_storeu_ps(&b[i], a4); // store the a4 in b.
+    b4 = _mm_load_si128((const _m128i *)&b[i]); //cast char as an _m128i
+    _mm_storeu_si128(&b[i], a4);                // store b[i] in a[i].
   }
-  for (int i = max_mul; i < size; i++)
+  for (int i = max_mul; i < size; i++) // handle extra end values.
   {
     a[i] = b[i];
   }
@@ -256,14 +255,23 @@ void partA_vectorized6(float *restrict a, float *restrict b,
 {
   // replace the following code with vectorized code
   a[0] = 0.0;
-  for (int i = 1; i < 1023; i++)
+  __m128 sumVector, b4, b4Minus, b4Plus, j0, j1, j2;
+  __m128 c0 = _mm_load_ps(&c[0]);
+  __m128 c1 = _mm_load_ps(&c[1]);
+  __m128 c2 = _mm_load_ps(&c[2]);
+  float zero = 0.0;
+  for (int i = 1; i < 1021; i = i + 4)
   {
-    float sum = 0.0;
-    for (int j = 0; j < 3; j++)
-    {
-      sum = sum + b[i + j - 1] * c[j];
-    }
-    a[i] = sum;
+    sumVector = _mm_set1_ps(zero); // sum = 0.0
+    b4 = _mm_loadu_ps(&b[i]);
+    bMinus = _mm_load_ps(&b[i - 1]);
+    bPlus = _mm_load_ps(&b[i + 1]);
+    j0 = _mm_mul_ps(b4Minus, c0);
+    j1 = _mm_mul_ps(b4, c0);
+    j2 = _mm_mul_ps(b4plus, c0);
+    sumVector = _mm_add_ps(j0, j1);
+    sumVector = _mm_add_ps(sumVector, j3);
+    _mm_storeu_ps(&a[i], sumVector);
   }
   a[1023] = 0.0;
 }
