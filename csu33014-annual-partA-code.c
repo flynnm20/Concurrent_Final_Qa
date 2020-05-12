@@ -258,10 +258,9 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   __m128 c1 = _mm_load_ps(&c[1]);
   __m128 c2 = _mm_load_ps(&c[2]);
   a[0] = 0.0;
-  float zero = 0.0;
   for (int i = 1; i < 1021; i = i + 4)
   {
-    sumVector = _mm_set1_ps(zero); // sum = 0.0
+    sumVector = _mm_set1_ps(0.0); // sum = 0.0
     b4 = _mm_loadu_ps(&b[i]);
     b4Minus = _mm_load_ps(&b[i - 1]);
     b4Plus = _mm_load_ps(&b[i + 1]);
