@@ -180,11 +180,11 @@ void partA_vectorized4(float *restrict a, float *restrict b,
     b4 = _mm_loadu_ps(&b[i]); // get 4 values of b
     c4 = _mm_loadu_ps(&c[i]); // get 4 valuse of a
 
-    b4plus = _mm_loadu_ps(&b[i + 1]);                       // get i+1 4 values of b
-    c4plus = _mm_loadu_ps(&c[i + 1]);                       // get i+1 4 valuse of a
-    product = _mm_mul_ps(b4, c4);                           //b[i] * c[i]
-    productplus1 = _mm_mul_ps(c4plus, b4plus);              // b[i + 1] * c[i + 1];
-    unsortedfirstgroup = _mm_sub_ps(product, productplus1); //a[i] = b[i] * c[i] - b[i + 1] * c[i + 1];
+    b4plus = _mm_loadu_ps(&b[i + 1]);               // get i+1 4 values of b
+    c4plus = _mm_loadu_ps(&c[i + 1]);               // get i+1 4 valuse of a
+    product = _mm_mul_ps(b4, c4);                   //b[i] * c[i]
+    productplus1 = _mm_mul_ps(c4plus, b4plus);      // b[i + 1] * c[i + 1];
+    firstgroup = _mm_sub_ps(product, productplus1); //a[i] = b[i] * c[i] - b[i + 1] * c[i + 1];
 
     product = _mm_mul_ps(b4, c4plus);                                           // b[i] * c[i + 1]
     productplus1 = _mm_mul_ps(c4, b4plus);                                      // b[i + 1] * c[i]
@@ -210,7 +210,7 @@ void partA_vectorized5(unsigned char *restrict a,
                        unsigned char *restrict b, int size)
 {
   // replace the following code with vectorized code
-  __m128 a4, b4;
+  /* __m128 a4, b4;
   int max_mul = size - (size % 4);
   for (int i = 0; i < max_mul; i = i + 4)
   {
@@ -218,7 +218,7 @@ void partA_vectorized5(unsigned char *restrict a,
     b4 = _mm_loadu_ps(&b[i]); // get 4 values of b
     _mm_storeu_ps(&a[i], b4); // store the b4 in a.
     _mm_storeu_ps(&b[i], a4); // store the a4 in b.
-  }
+  }*/
   for (int i = max_mul; i < size; i++)
   {
     a[i] = b[i];
@@ -259,4 +259,3 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
-
