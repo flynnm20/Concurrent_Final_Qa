@@ -93,7 +93,7 @@ void partA_vectorized2(float *restrict a, float *restrict b, int size)
   float one = 1;
   int max_Mulitiple = size - (size % 4);
   __m128 ones = _mm_set1_ps(one);
-  for (int i = 0; i < max_Mulitiple; i + 4)
+  for (int i = 0; i < max_Mulitiple; i = i + 4)
   {
     b4 = _mm_loadu_ps(&b[i]);
     sum = _mm_add_ps(b4, ones);      // b[i]+1
