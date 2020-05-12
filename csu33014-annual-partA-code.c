@@ -134,7 +134,7 @@ void partA_vectorized3(float *restrict a, float *restrict b, int size)
     a4 = _mm_loadu_ps(&a[i]);                           // get 4 valuse of a
     b4 = _mm_loadu_ps(&b[i]);                           // get 4 values of b
     mask = _mm_cmplt_ps(a4, zeros);                     // create a mask using comparrison.
-    mask2 = _mm_cmpge_ps(a4, zeros);                   //inverse of mask                  // create a mask using comparrison.
+    mask2 = _mm_cmpge_ps(a4, zeros);                    //inverse of mask                  // create a mask using comparrison.
     removedElemsB = _mm_and_ps(b4, mask);               // anding with the mask will give the values which need replacemen    a4 = _mm_andnot_ps(mask, a4);   // remove a's that need to be replaced.
     removedElemsA = _mm_and_ps(a4, mask2);              // anding with the mask will give the values which need replacemen    a4 = _mm_andnot_ps(mask, a4);   // remove a's that need to be replaced.
     results = _mm_add_ps(removedElemsA, removedElemsB); // fill in all the area's that need to be filled in.
@@ -192,7 +192,7 @@ void partA_vectorized5(unsigned char *restrict a,
   // replace the following code with vectorized code
   __m128 a4, b4;
   int max_mul = size - (size % 4);
-  for (int i = 0; i < max_mul; i + 4)
+  for (int i = 0; i < max_mul; i = i + 4)
   {
     a4 = _mm_loadu_ps(&a[i]); // get 4 valuse of a
     b4 = _mm_loadu_ps(&b[i]); // get 4 values of b
@@ -239,4 +239,3 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
-
