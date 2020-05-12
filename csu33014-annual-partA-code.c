@@ -63,26 +63,24 @@ float partA_routine1(float *restrict a, float *restrict b,
 float partA_vectorized1(float *restrict a, float *restrict b,
                         int size)
 {
-  // replace the following code with vectorized code
-  float sum = 0.0;
-  __m128 a4, b4, product, brokeSum;
-  brokeSum = _mm_set1_ps(0.0); // initialise sum.
-  int max_Mulitiple = size - (size % 4);
-  for (int i = 0; i < max_Mulitiple; i = i + 4)
+  float sum = 0.0;                              // track sum
+  __m128 a4, b4, product, brokeSum;             // generate variables
+  brokeSum = _mm_set1_ps(0.0);                  // initialise sum.
+  int max_Mulitiple = size - (size % 4);        // get the max multiple of 4
+  for (int i = 0; i < max_Mulitiple; i = i + 4) // preform the vectoried section
   {
-    a4 = _mm_loadu_ps(&a[i]);
-    b4 = _mm_loadu_ps(&b[i]);
-    product = _mm_mul_ps(a4, b4);
-    brokeSum = _mm_add_ps(brokeSum, product);
+    a4 = _mm_loadu_ps(&a[i]);                 // load 4 variables from a
+    b4 = _mm_loadu_ps(&b[i]);                 // load 4 variables from b
+    product = _mm_mul_ps(a4, b4);             // a[i] * b[i]
+    brokeSum = _mm_add_ps(brokeSum, product); // sum = sum + a[i] * b[i]
   }
-  brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
-  brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
-  sum = _mm_cvtss_f32(brokeSum);
-  for (int j = max_Mulitiple; j < size; j++)
+  brokeSum = _mm_hadd_ps(brokeSum, brokeSum); // combine the first pair of results and second pair of results
+  brokeSum = _mm_hadd_ps(brokeSum, brokeSum); // sum the remaining resuls so it is all in 1 variable.
+  sum = _mm_cvtss_f32(brokeSum);              // get the sum from the front.
+  for (int j = max_Mulitiple; j < size; j++)  // handle the extra end.
   {
     sum = sum + a[j] * b[j];
   }
-
   return sum;
 }
 
@@ -100,20 +98,20 @@ void partA_routine2(float *restrict a, float *restrict b, int size)
 // in the following, size can have any positive value
 void partA_vectorized2(float *restrict a, float *restrict b, int size)
 {
-  // replace the following code with vectorized code
-  __m128 a4, b4, sum, division;
-  float one = 1;
-  int max_Mulitiple = size - (size % 4);
-  __m128 ones = _mm_set1_ps(one);
-  for (int i = 0; i < max_Mulitiple; i = i + 4)
+  __m128 a4, b4, sum, division;          // generate variables
+  float one = 1;                         // Use to initialise a constant vector.
+  int max_Mulitiple = size - (size % 4); // get the max multiple of 4 less then size
+  __m128 ones = _mm_set1_ps(one);        // create a constant vector
+
+  for (int i = 0; i < max_Mulitiple; i = i + 4) // vectorised loop
   {
-    b4 = _mm_loadu_ps(&b[i]);
+    b4 = _mm_loadu_ps(&b[i]);         // load 4 values from b
     sum = _mm_add_ps(b4, ones);       // b[i]+1
     division = _mm_div_ps(ones, sum); //1/(b[i]-1)
     a4 = _mm_sub_ps(ones, division);  //a[i] = 1 - (1.0 / (b[i] + 1.0));
     _mm_storeu_ps(&a[i], a4);         // store in a.
   }
-  // now have at most 3 extra values;
+  // now have at most 3 extra values
   for (int j = max_Mulitiple; j < size; j++)
   {
     a[j] = 1 - (1.0 / (b[j] + 1.0));
@@ -178,7 +176,7 @@ void partA_routine4(float *restrict a, float *restrict b,
 void partA_vectorized4(float *restrict a, float *restrict b,
                        float *restrict c)
 {
-  __m128 a4, b4, c4, b4plus, c4plus, product, productplus1, firstgroup, secondgroup, results;
+  __m128 b4, c4, b4plus, c4plus, product, productplus1, firstgroup, secondgroup, results;
   // replace the following code with vectorized code
   for (int i = 0; i < 2048; i = i + 4)
   {
@@ -254,23 +252,27 @@ void partA_vectorized6(float *restrict a, float *restrict b,
                        float *restrict c)
 {
   __m128 sumVector, b4, b4Minus, b4Plus, j0, j1, j2;
-  __m128 c0 = _mm_load1_ps(&c[0]);
-  __m128 c1 = _mm_load1_ps(&c[1]);
-  __m128 c2 = _mm_load1_ps(&c[2]);
+  __m128 c0 = _mm_load1_ps(&c[0]); // initialise vector of c[0]
+  __m128 c1 = _mm_load1_ps(&c[1]); // initialise vector of c[1]
+  __m128 c2 = _mm_load1_ps(&c[2]); // initialise vector of c[2]
+  // easier to create vectors outside the loop.
   a[0] = 0.0;
   for (int i = 1; i < 1020; i = i + 4)
   {
-    sumVector = _mm_set1_ps(0.0); // sum = 0.0
-    b4 = _mm_loadu_ps(&b[i]);
-    b4Minus = _mm_loadu_ps(&b[i - 1]);
-    b4Plus = _mm_loadu_ps(&b[i + 1]);
-    j0 = _mm_mul_ps(b4Minus, c0);
-    j1 = _mm_mul_ps(b4, c1);
-    j2 = _mm_mul_ps(b4Plus, c2);
-    sumVector = _mm_add_ps(j0, j1);
-    sumVector = _mm_add_ps(sumVector, j2);
-    _mm_storeu_ps(&a[i], sumVector);
+    sumVector = _mm_set1_ps(0.0);      // sum = 0.0
+    b4 = _mm_loadu_ps(&b[i]);          // get b when j =0
+    b4Minus = _mm_loadu_ps(&b[i - 1]); // get b when j = 1
+    b4Plus = _mm_loadu_ps(&b[i + 1]);  // get b when j = 2
+
+    j0 = _mm_mul_ps(b4Minus, c0); // b[i-1] * c[0]
+    j1 = _mm_mul_ps(b4, c1);      // b[i] *c[1]
+    j2 = _mm_mul_ps(b4Plus, c2);  // b[i+2] * c[2]
+
+    sumVector = _mm_add_ps(j0, j1);        // sum = (b[i-1] * c[0]) + (b[i] *c[1])
+    sumVector = _mm_add_ps(sumVector, j2); // sum = sum + (b[i+2] * c[2])
+    _mm_storeu_ps(&a[i], sumVector);       // a[i] = sum
   }
+  // handle the last 3 iterations linearly.
   for (int i = 1021; i < 1023; i++)
   {
     float sum = 0.0;
