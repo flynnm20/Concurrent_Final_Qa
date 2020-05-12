@@ -254,9 +254,9 @@ void partA_vectorized6(float *restrict a, float *restrict b,
                        float *restrict c)
 {
   __m128 sumVector, b4, b4Minus, b4Plus, j0, j1, j2;
-  __m128 c0 = _mm_load_ps(&c[0]);
-  __m128 c1 = _mm_load_ps(&c[1]);
-  __m128 c2 = _mm_load_ps(&c[2]);
+  __m128 c0 = _mm_load1_ps(&c[0]);
+  __m128 c1 = _mm_load1_ps(&c[1]);
+  __m128 c2 = _mm_load1_ps(&c[2]);
   a[0] = 0.0;
   float zero = 0.0;
   for (int i = 1; i < 1020; i = i + 4)
