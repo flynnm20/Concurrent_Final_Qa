@@ -173,7 +173,7 @@ void partA_routine4(float *restrict a, float *restrict b,
 void partA_vectorized4(float *restrict a, float *restrict b,
                        float *restrict c)
 {
-  __m128 a4, b4, c4, b4plus, c4plus, product, productplus1, firstgroup, unsortedfirstgroup, secondgroup, results;
+  __m128 a4, b4, c4, b4plus, c4plus, product, productplus1, firstgroup, secondgroup, results;
   // replace the following code with vectorized code
   for (int i = 0; i < 2048; i = i + 4)
   {
@@ -190,6 +190,7 @@ void partA_vectorized4(float *restrict a, float *restrict b,
     productplus1 = _mm_mul_ps(c4, b4plus);                                      // b[i + 1] * c[i]
     secondgroup = _mm_add_ps(productplus1, product);                            //a[i + 1] = b[i] * c[i + 1] + b[i + 1] * c[i];
     results = _mm_shuffle_ps(firstgroup, secondgroup, _MM_SHUFFLE(0, 2, 1, 3)); // combine the 2 halfs
+    results = _mm_shuffle_ps(results, results, _MM_SHUFFLE(0, 2, 1, 3));        // combine the 2 halfs
     _mm_storeu_ps(&a[i], results);                                              // store the updated a4 back in the orignal a.
   }
 }
