@@ -73,7 +73,7 @@ float partA_vectorized1(float *restrict a, float *restrict b,
     a4 = _mm_loadu_ps(&a[i]);
     b4 = _mm_loadu_ps(&b[i]);
     tmp = _mm_mul_ps(a4, b4);
-    brokeSum = _mm_add_ps(sum4, tmp);
+    brokeSum = _mm_add_ps(brokeSum, tmp);
   }
   brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
   brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
