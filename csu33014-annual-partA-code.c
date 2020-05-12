@@ -97,8 +97,8 @@ void partA_vectorized2(float *restrict a, float *restrict b, int size)
   {
     b4 = _mm_loadu_ps(&b[i]);
     sum = _mm_add_ps(b4, ones);      // b[i]+1
-    division = _mm_div_ps(ones, b4); //1/(b[i]-1)
-    a4 = _mm_sub_ps(ones, b4);       //a[i] = 1 - (1.0 / (b[i] + 1.0));
+    division = _mm_div_ps(ones, sum); //1/(b[i]-1)
+    a4 = _mm_sub_ps(ones, division);       //a[i] = 1 - (1.0 / (b[i] + 1.0));
     _mm_storeu_ps(&a[i], a4);        // store in a.
   }
   // now have at most 3 extra values;
@@ -238,3 +238,4 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
+
