@@ -138,7 +138,7 @@ void partA_vectorized3(float *restrict a, float *restrict b, int size)
     mask2 = _mm_xor_ps(mask, ones);          //inverse of mask                  // create a mask using comparrison.
     removedElemsB = _mm_and_ps(b4, mask);    // anding with the mask will give the values which need replacemen    a4 = _mm_andnot_ps(mask, a4);   // remove a's that need to be replaced.
     removedElemsA = _mm_and_ps(a4, mask2);    // anding with the mask will give the values which need replacemen    a4 = _mm_andnot_ps(mask, a4);   // remove a's that need to be replaced.
-    results = _mm_add_ps(a4, removedElemsB); // fill in all the area's that need to be filled in.
+    results = _mm_add_ps(removedElemsA, removedElemsB); // fill in all the area's that need to be filled in.
     _mm_storeu_ps(&a[i], results);           // store the updated a4 back in the orignal a.
   }
   for (int i = max_Mulitiple; i < size; i++)
