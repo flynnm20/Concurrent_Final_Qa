@@ -190,7 +190,7 @@ void partA_vectorized5(unsigned char *restrict a,
                        unsigned char *restrict b, int size)
 {
   // replace the following code with vectorized code
-  _m128 a4, b4;
+  __m128 a4, b4;
   int max_mul = size - (size % 4);
   for (int i = 0; i < max_mul; i + 4)
   {
@@ -239,4 +239,3 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
-
