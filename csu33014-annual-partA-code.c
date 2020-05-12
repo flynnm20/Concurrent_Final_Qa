@@ -191,7 +191,7 @@ void partA_vectorized4(float *restrict a, float *restrict b,
     product = _mm_mul_ps(b4, c4);                           //b[i] * c[i]
     productplus1 = _mm_mul_ps(c4plus, b4plus);              // b[i + 1] * c[i + 1];
     unsortedfirstgroup = _mm_sub_ps(product, productplus1); //a[i] = b[i] * c[i] - b[i + 1] * c[i + 1];
-    firstgroup = __mm_and_ps(mask, firstgroup);             // remove all except element 0 and 3.
+    firstgroup = _mm_and_ps(mask, firstgroup);              // remove all except element 0 and 3.
 
     product = _mm_mul_ps(b4, c4plus);                // b[i] * c[i + 1]
     productplus1 = _mm_mul_ps(c4, b4plus);           // b[i + 1] * c[i]
@@ -267,3 +267,4 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
+
