@@ -104,7 +104,7 @@ void partA_vectorized2(float *restrict a, float *restrict b, int size)
   // now have at most 3 extra values;
   for (int j = max_Mulitiple; j < size; j++)
   {
-    a[size - j] = 1 - (1.0 / (b[size - j] + 1.0));
+    a[j] = 1 - (1.0 / (b[j] + 1.0));
   }
 }
 
