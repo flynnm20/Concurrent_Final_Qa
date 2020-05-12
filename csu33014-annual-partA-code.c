@@ -128,7 +128,6 @@ void partA_vectorized3(float *restrict a, float *restrict b, int size)
   // replace the following code with vectorized code
   __m128 a4, b4, mask, removedElemsB, removedElemsA, mask2, results;
   __m128 zeros = _mm_set1_ps(0.0);
-  __m128 ones = _mm_set1_ps(1.0);
   int max_Mulitiple = size - (size % 4);
   for (int i = 0; i < max_Mulitiple; i = i + 4)
   {
@@ -240,5 +239,4 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
-
 
