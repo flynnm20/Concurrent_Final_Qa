@@ -67,14 +67,13 @@ float partA_vectorized1(float *restrict a, float *restrict b,
   float sum = 0.0;
   __m128 a4, b4, tmp, brokeSum;
   brokeSum = _mm_set1_ps(0.0); // initialise sum.
-  float sum = 0.0;
   int max_Mulitiple = size - (size % 4);
   for (int i = 0; i < max_Mulitiple; i = i + 4)
   {
     a4 = _mm_loadu_ps(&a[i]);
     b4 = _mm_loadu_ps(&b[i]);
     tmp = _mm_mul_ps(a4, b4);
-    brokeSum = _mm_add_ps(sum4, tmp)
+    brokeSum = _mm_add_ps(sum4, tmp);
   }
   brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
   brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
@@ -177,8 +176,10 @@ void partA_vectorized4(float *restrict a, float *restrict b,
   __m128 a4, b4, c4, b4plus, c4plus, product, productplus1, firstgroup, secondgroup, results;
   // replace the following code with vectorized code
   __m128 tmp = _mm_setr_ps(1.0, 0.0, 1.0, 0.0);
-  __m128 mask = _mm_cmpgt_ps(tmp, 0.0);  // (1, 0, 1,0)
-  __m128 mask2 = _mm_cmplt_ps(tmp, 1.0); // (0, 1, 0, 1)
+  __m128 zeros = _mm_set1_ps(0.0);
+  __m128 ones = _mm_set1_ps(1.0);
+  __m128 mask = _mm_cmpgt_ps(tmp, zeros); // (1, 0, 1,0)
+  __m128 mask2 = _mm_cmplt_ps(tmp, ones); // (0, 1, 0, 1)
   for (int i = 0; i < 2048; i = i + 4)
   {
     a4 = _mm_loadu_ps(&a[i]); // get 4 valuse of a
