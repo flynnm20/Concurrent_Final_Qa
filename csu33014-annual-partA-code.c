@@ -220,16 +220,16 @@ void partA_vectorized5(unsigned char *restrict a,
   // replace the following code with vectorized code
   // since we aren't working with floats we need to cast them correctly.
   __m128i a4, b4, tmp;
-  int max_mul = size - (size % 4);
+  //int max_mul = size - (size % 4);
   for (int i = 0; i < max_mul; i = i + 16)
   {
     b4 = _mm_load_si128((const __m128i *)&b[i]); //cast char as an _m128i
     _mm_storeu_si128(&a[i], b4);                 // store b[i] in a[i].
   }
-  for (int i = max_mul; i < size; i++) // handle extra end values.
+  /*for (int i = max_mul; i < size; i++) // handle extra end values.
   {
     a[i] = b[i];
-  }
+  }*/
 }
 
 /********************* routine 6 ***********************/
