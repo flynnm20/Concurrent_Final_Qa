@@ -175,14 +175,8 @@ void partA_vectorized4(float *restrict a, float *restrict b,
 {
   __m128 a4, b4, c4, b4plus, c4plus, product, productplus1, firstgroup, unsortedfirstgroup, secondgroup, results;
   // replace the following code with vectorized code
-  __m128 tmp = _mm_setr_ps(1.0, 0.0, 1.0, 0.0);
-  __m128 zeros = _mm_set1_ps(0.0);
-  __m128 ones = _mm_set1_ps(1.0);
-  __m128 mask = _mm_cmpgt_ps(tmp, zeros); // (1, 0, 1,0)
-  __m128 mask2 = _mm_cmplt_ps(tmp, ones); // (0, 1, 0, 1)
   for (int i = 0; i < 2048; i = i + 4)
   {
-    a4 = _mm_loadu_ps(&a[i]); // get 4 valuse of a
     b4 = _mm_loadu_ps(&b[i]); // get 4 values of b
     c4 = _mm_loadu_ps(&c[i]); // get 4 valuse of a
 
@@ -191,14 +185,12 @@ void partA_vectorized4(float *restrict a, float *restrict b,
     product = _mm_mul_ps(b4, c4);                           //b[i] * c[i]
     productplus1 = _mm_mul_ps(c4plus, b4plus);              // b[i + 1] * c[i + 1];
     unsortedfirstgroup = _mm_sub_ps(product, productplus1); //a[i] = b[i] * c[i] - b[i + 1] * c[i + 1];
-    firstgroup = _mm_and_ps(mask, firstgroup);              // remove all except element 0 and 3.
 
-    product = _mm_mul_ps(b4, c4plus);                // b[i] * c[i + 1]
-    productplus1 = _mm_mul_ps(c4, b4plus);           // b[i + 1] * c[i]
-    secondgroup = _mm_add_ps(productplus1, product); //a[i + 1] = b[i] * c[i + 1] + b[i + 1] * c[i];
-    secondgroup = _mm_and_ps(mask2, secondgroup);
-    results = _mm_add_ps(secondgroup, firstgroup); // combine the 2 halfs
-    _mm_storeu_ps(&a[i], results);                 // store the updated a4 back in the orignal a.
+    product = _mm_mul_ps(b4, c4plus);                                           // b[i] * c[i + 1]
+    productplus1 = _mm_mul_ps(c4, b4plus);                                      // b[i + 1] * c[i]
+    secondgroup = _mm_add_ps(productplus1, product);                            //a[i + 1] = b[i] * c[i + 1] + b[i + 1] * c[i];
+    results = _mm_shuffle_ps(firstgroup, secondgroup, _MM_SHUFFLE(0, 2, 1, 3)); // combine the 2 halfs
+    _mm_storeu_ps(&a[i], results);                                              // store the updated a4 back in the orignal a.
   }
 }
 
