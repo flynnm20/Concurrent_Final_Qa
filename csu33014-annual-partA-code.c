@@ -191,13 +191,13 @@ void partA_vectorized5(unsigned char *restrict a,
   // replace the following code with vectorized code
   __m128 a4, b4;
   int max_mul = size - (size % 4);
-  for (int i = 0; i < max_mul; i + 4)
+  /*for (int i = 0; i < max_mul; i + 4)
   {
     a4 = _mm_loadu_ps(&a[i]); // get 4 valuse of a
     b4 = _mm_loadu_ps(&b[i]); // get 4 values of b
     _mm_storeu_ps(&a[i], b4); // store the b4 in a.
     _mm_storeu_ps(&b[i], a4); // store the a4 in b.
-  }
+  }*/
   for (int i = max_mul; i < size; i++)
   {
     a[i] = b[i];
@@ -238,4 +238,3 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
-
