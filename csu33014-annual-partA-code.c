@@ -78,7 +78,7 @@ float partA_vectorized1(float *restrict a, float *restrict b,
   brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
   brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
   sum = _mm_cvtss_f32(brokeSum);
-  for (int j = max_Mulitiple; i < j < size; j++)
+  for (int j = max_Mulitiple; j < size; j++)
   {
     sum = sum + a[j] + b[j];
   }
@@ -267,3 +267,4 @@ void partA_vectorized6(float *restrict a, float *restrict b,
   }
   a[1023] = 0.0;
 }
+
