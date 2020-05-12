@@ -173,7 +173,7 @@ void partA_routine4(float *restrict a, float *restrict b,
 void partA_vectorized4(float *restrict a, float *restrict b,
                        float *restrict c)
 {
-  __m128 a4, b4, c4, b4plus, c4plus, product, productplus1, firstgroup, secondgroup, results;
+  __m128 a4, b4, c4, b4plus, c4plus, product, productplus1, firstgroup, unsortedfirstgroup, secondgroup, results;
   // replace the following code with vectorized code
   __m128 tmp = _mm_setr_ps(1.0, 0.0, 1.0, 0.0);
   __m128 zeros = _mm_set1_ps(0.0);
@@ -186,12 +186,12 @@ void partA_vectorized4(float *restrict a, float *restrict b,
     b4 = _mm_loadu_ps(&b[i]); // get 4 values of b
     c4 = _mm_loadu_ps(&c[i]); // get 4 valuse of a
 
-    b4plus = _mm_loadu_ps(&b[i + 1]);               // get i+1 4 values of b
-    c4plus = _mm_loadu_ps(&c[i + 1]);               // get i+1 4 valuse of a
-    product = _mm_mul_ps(b4, c4);                   //b[i] * c[i]
-    productplus1 = _mm_mul_ps(c4plus, b4plus);      // b[i + 1] * c[i + 1];
-    firstgroup = _mm_sub_ps(product, productplus1); //a[i] = b[i] * c[i] - b[i + 1] * c[i + 1];
-    firstgroup = __mm_and_ps(mask, firstgroup);     // remove all except element 0 and 3.
+    b4plus = _mm_loadu_ps(&b[i + 1]);                       // get i+1 4 values of b
+    c4plus = _mm_loadu_ps(&c[i + 1]);                       // get i+1 4 valuse of a
+    product = _mm_mul_ps(b4, c4);                           //b[i] * c[i]
+    productplus1 = _mm_mul_ps(c4plus, b4plus);              // b[i + 1] * c[i + 1];
+    unsortedfirstgroup = _mm_sub_ps(product, productplus1); //a[i] = b[i] * c[i] - b[i + 1] * c[i + 1];
+    firstgroup = __mm_and_ps(mask, firstgroup);             // remove all except element 0 and 3.
 
     product = _mm_mul_ps(b4, c4plus);                // b[i] * c[i + 1]
     productplus1 = _mm_mul_ps(c4, b4plus);           // b[i + 1] * c[i]
