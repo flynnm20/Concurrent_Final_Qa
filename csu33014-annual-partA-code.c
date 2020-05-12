@@ -65,19 +65,24 @@ float partA_vectorized1(float *restrict a, float *restrict b,
 {
   // replace the following code with vectorized code
   float sum = 0.0;
-  __m128 a4, b4, tmp, brokeSum;
+  __m128 a4, b4, product, brokeSum;
   brokeSum = _mm_set1_ps(0.0); // initialise sum.
   int max_Mulitiple = size - (size % 4);
   for (int i = 0; i < max_Mulitiple; i = i + 4)
   {
     a4 = _mm_loadu_ps(&a[i]);
     b4 = _mm_loadu_ps(&b[i]);
-    tmp = _mm_mul_ps(a4, b4);
-    brokeSum = _mm_add_ps(brokeSum, tmp);
+    product = _mm_mul_ps(a4, b4);
+    brokeSum = _mm_add_ps(brokeSum, product);
   }
   brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
   brokeSum = _mm_hadd_ps(brokeSum, brokeSum);
   sum = _mm_cvtss_f32(brokeSum);
+  for (int j = max_Mulitiple; i < j < size; j++)
+  {
+    sum = sum + a[j] + b[j];
+  }
+
   return sum;
 }
 
@@ -186,12 +191,14 @@ void partA_vectorized4(float *restrict a, float *restrict b,
     productplus1 = _mm_mul_ps(c4plus, b4plus);      // b[i + 1] * c[i + 1];
     firstgroup = _mm_sub_ps(product, productplus1); //a[i] = b[i] * c[i] - b[i + 1] * c[i + 1];
 
-    product = _mm_mul_ps(b4, c4plus);                                           // b[i] * c[i + 1]
-    productplus1 = _mm_mul_ps(c4, b4plus);                                      // b[i + 1] * c[i]
-    secondgroup = _mm_add_ps(productplus1, product);                            //a[i + 1] = b[i] * c[i + 1] + b[i + 1] * c[i];
+    product = _mm_mul_ps(b4, c4plus);                // b[i] * c[i + 1]
+    productplus1 = _mm_mul_ps(c4, b4plus);           // b[i + 1] * c[i]
+    secondgroup = _mm_add_ps(productplus1, product); // a[i + 1] = b[i] * c[i + 1] + b[i + 1] * c[i];
+
     results = _mm_shuffle_ps(firstgroup, secondgroup, _MM_SHUFFLE(3, 1, 2, 0)); // combine the 2 halfs
     results = _mm_shuffle_ps(results, results, _MM_SHUFFLE(3, 2, 1, 0));        // combine the 2 halfs
-    _mm_storeu_ps(&a[i], results);                                              // store the updated a4 back in the orignal a.
+
+    _mm_storeu_ps(&a[i], results); // store the updated a4 back in the orignal a.
   }
 }
 
