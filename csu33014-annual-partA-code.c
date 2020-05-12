@@ -96,10 +96,10 @@ void partA_vectorized2(float *restrict a, float *restrict b, int size)
   for (int i = 0; i < max_Mulitiple; i = i + 4)
   {
     b4 = _mm_loadu_ps(&b[i]);
-    sum = _mm_add_ps(b4, ones);      // b[i]+1
+    sum = _mm_add_ps(b4, ones);       // b[i]+1
     division = _mm_div_ps(ones, sum); //1/(b[i]-1)
-    a4 = _mm_sub_ps(ones, division);       //a[i] = 1 - (1.0 / (b[i] + 1.0));
-    _mm_storeu_ps(&a[i], a4);        // store in a.
+    a4 = _mm_sub_ps(ones, division);  //a[i] = 1 - (1.0 / (b[i] + 1.0));
+    _mm_storeu_ps(&a[i], a4);         // store in a.
   }
   // now have at most 3 extra values;
   for (int j = max_Mulitiple; j < size; j++)
@@ -129,7 +129,7 @@ void partA_vectorized3(float *restrict a, float *restrict b, int size)
   __m128 a4, b4, mask;
   __m128 zeros = _mm_set1_ps(0.0);
   int max_Mulitiple = size - (size % 4);
-  for (int i = 0; i < max_Mulitiple; i + 4)
+  for (int i = 0; i < max_Mulitiple; i = i + 4)
   {
     a4 = _mm_loadu_ps(&a[i]);       // get 4 valuse of a
     b4 = _mm_loadu_ps(&b[i]);       // get 4 values of b
