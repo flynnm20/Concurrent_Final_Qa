@@ -101,6 +101,7 @@ void partA_vectorized2(float *restrict a, float *restrict b, int size)
     a4 = _mm_sub_ps(ones, b4); //a[i] = 1 - (1.0 / (b[i] + 1.0));
     _mm_storeu_ps(&a[i], a4);  // store in a.
   }
+  printf("Exited the loop");
   // now have at most 3 extra values;
   for (int j = max_Mulitiple; j < size; j++)
   {
